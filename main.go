@@ -15,7 +15,7 @@ func main() {
 	fmt.Println(db)
 	router := newRouter()
 
-	server := http.ListenAndServe(":8081", router)
+	server := http.ListenAndServe(":8082", router)
 
 	log.Fatal(server)
 

@@ -59,7 +59,10 @@ func obtenerDB(tokenAutenticacion *publico.TokenAutenticacion) *gorm.DB {
 func errorToken(w http.ResponseWriter, tokenError *publico.Error) {
 	errorToken := *tokenError
 	respondError(w, errorToken.ErrorCodigo, errorToken.ErrorNombre)
+}
 
+func respondError(w http.ResponseWriter, code int, message string) {
+	respondJSON(w, code, map[string]string{"error": message})
 }
 
 func checkTokenValido(r *http.Request) (*publico.TokenAutenticacion, *publico.Error) {
