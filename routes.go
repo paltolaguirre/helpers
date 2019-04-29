@@ -28,9 +28,9 @@ func newRouter() *mux.Router {
 
 var routes = Routes{
 	Route{
-		"PaisesHLP",
+		"getHelper",
 		"GET",
-		"/helpers/paises",
-		PaisesHLP,
+		"/helpers/{codigoHelper}",
+		getHelper,
 	},
 }

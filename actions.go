@@ -9,7 +9,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/xubiosueldos/autenticacion/publico"
 	"github.com/xubiosueldos/conexionBD"
-	"github.com/xubiosueldos/helpers/structHelpers"
 )
 
 func respondJSON(w http.ResponseWriter, status int, results interface{}) {
@@ -26,7 +25,7 @@ func respondJSON(w http.ResponseWriter, status int, results interface{}) {
 
 }
 
-func PaisesHLP(w http.ResponseWriter, r *http.Request) {
+func getHelper(w http.ResponseWriter, r *http.Request) {
 
 	tokenAutenticacion, tokenError := checkTokenValido(r)
 
@@ -35,10 +34,13 @@ func PaisesHLP(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 
+		/*	params := mux.Vars(r)
+			codigoHelper := params["codigoHelper"]*/
+
 		db := obtenerDB(tokenAutenticacion)
 		defer db.Close()
 
-		var helper []structHelpers.Pais
+		var helper []structhelpers.helper
 
 		db.Find(&helper)
 
