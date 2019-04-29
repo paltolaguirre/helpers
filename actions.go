@@ -5,11 +5,26 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/xubiosueldos/autenticacion/publico"
 	"github.com/xubiosueldos/conexionBD"
 )
+
+var codigoHelper string
+
+type helper struct {
+	gorm.Model
+	Nombre      string `json:"nombre"`
+	Codigo      string `json:"codigo"`
+	Descripcion string `json:"descripcion"`
+	Activo      int    `json:"activo"`
+}
+
+func (helper) TableName() string {
+	return codigoHelper
+}
 
 func respondJSON(w http.ResponseWriter, status int, results interface{}) {
 
@@ -34,13 +49,13 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 
-		/*	params := mux.Vars(r)
-			codigoHelper := params["codigoHelper"]*/
+		params := mux.Vars(r)
+		codigoHelper = params["codigoHelper"]
 
 		db := obtenerDB(tokenAutenticacion)
 		defer db.Close()
 
-		var helper []structhelpers.helper
+		var helper []helper
 
 		db.Find(&helper)
 
