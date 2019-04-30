@@ -12,19 +12,19 @@ import (
 	"github.com/xubiosueldos/conexionBD"
 )
 
-var codigoHelper string
-
-type helper struct {
-	gorm.Model
+type strhelper struct {
+	//	gorm.Model
+	ID          string `json:"id"`
 	Nombre      string `json:"nombre"`
 	Codigo      string `json:"codigo"`
 	Descripcion string `json:"descripcion"`
-	Activo      int    `json:"activo"`
+	//	Activo      int    `json:"activo"`
 }
 
-func (helper) TableName() string {
+/*
+func (strhelper) TableName() string {
 	return codigoHelper
-}
+}*/
 
 func respondJSON(w http.ResponseWriter, status int, results interface{}) {
 
@@ -50,14 +50,15 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		params := mux.Vars(r)
-		codigoHelper = params["codigoHelper"]
 
 		db := obtenerDB(tokenAutenticacion)
 		defer db.Close()
 
-		var helper []helper
+		var helper []strhelper
 
-		db.Find(&helper)
+		//db.Raw("SELECT * FROM "+params["codigoHelper"]+" WHERE activo = 1 and deleted_at is null").Scan(&helper)
+
+		db.Table(params["codigoHelper"]).Where("activo = 1 and deleted_at is null").Select("id,nombre,codigo,descripcion").Scan(&helper)
 
 		respondJSON(w, http.StatusOK, helper)
 	}
