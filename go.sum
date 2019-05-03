@@ -30,5 +30,5 @@ github.com/xubiosueldos/conexionBD v0.0.0-20190425155113-ce1c3a6502af h1:VkIw78o
 github.com/xubiosueldos/conexionBD v0.0.0-20190425155113-ce1c3a6502af/go.mod h1:lj2Nc2StmltUnFkHBpa/YHdDs7gRZ0qnRzht4fnaBEA=
 github.com/xubiosueldos/conexionBD v0.0.0-20190425182629-f2ef884a3abd h1:t9Bwkn2GDyasm1XbfqY/jBSd44U1Bql/KZen7tm8Jz8=
 github.com/xubiosueldos/conexionBD v0.0.0-20190425182629-f2ef884a3abd/go.mod h1:lj2Nc2StmltUnFkHBpa/YHdDs7gRZ0qnRzht4fnaBEA=
-github.com/xubiosueldos/legajo v1.0.1-0.20190412135527-8b5c7d2da8bc h1:HHu5ULXk3Br6gJL32rNSpCmOj+QGMO5Si8oVFxJfU/E=
-github.com/xubiosueldos/legajo v1.0.1-0.20190412135527-8b5c7d2da8bc/go.mod h1:pzixxpkvIskZfYPK7tCXi7RKkThZrZw0CdOfnWUaIOk=
+github.com/xubiosueldos/framework v0.0.0-20190502133422-d53dd93b5196 h1:SA+m66fK0NXhrVbj4pvXj/KEjbtxq+IyzdEWjsOm0Lw=
+github.com/xubiosueldos/framework v0.0.0-20190502133422-d53dd93b5196/go.mod h1:txPj3GVjVoZeJnObRIBrzNFVDT7baf2VEpK3kCkpDWg=

@@ -5,4 +5,5 @@ require (
 	github.com/jinzhu/gorm v1.9.2
 	github.com/xubiosueldos/autenticacion v0.0.0-20190425182354-6a9aac7dcae4
 	github.com/xubiosueldos/conexionBD v0.0.0-20190425182629-f2ef884a3abd
+	github.com/xubiosueldos/framework v0.0.0-20190502133422-d53dd93b5196
 )

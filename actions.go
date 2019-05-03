@@ -10,6 +10,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/xubiosueldos/autenticacion/publico"
 	"github.com/xubiosueldos/conexionBD"
+	"github.com/xubiosueldos/framework"
 )
 
 type strhelper struct {
@@ -25,20 +26,6 @@ type strhelper struct {
 func (strhelper) TableName() string {
 	return codigoHelper
 }*/
-
-func respondJSON(w http.ResponseWriter, status int, results interface{}) {
-
-	response, err := json.Marshal(results)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	w.Write([]byte(response))
-
-}
 
 func getHelper(w http.ResponseWriter, r *http.Request) {
 
@@ -60,7 +47,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 		db.Table(params["codigoHelper"]).Where("activo = 1 and deleted_at is null").Select("id,nombre,codigo,descripcion").Scan(&helper)
 
-		respondJSON(w, http.StatusOK, helper)
+		framework.RespondJSON(w, http.StatusOK, helper)
 	}
 
 }
@@ -76,11 +63,7 @@ func obtenerDB(tokenAutenticacion *publico.TokenAutenticacion) *gorm.DB {
 
 func errorToken(w http.ResponseWriter, tokenError *publico.Error) {
 	errorToken := *tokenError
-	respondError(w, errorToken.ErrorCodigo, errorToken.ErrorNombre)
-}
-
-func respondError(w http.ResponseWriter, code int, message string) {
-	respondJSON(w, code, map[string]string{"error": message})
+	framework.RespondError(w, errorToken.ErrorCodigo, errorToken.ErrorNombre)
 }
 
 func checkTokenValido(r *http.Request) (*publico.TokenAutenticacion, *publico.Error) {
