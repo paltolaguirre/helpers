@@ -27,10 +27,10 @@ type strhelper struct {
 
 type strHlprServlet struct {
 	//	gorm.Model
-	Username  string `json:"username"`
-	Tenant    string `json:"tenant"`
-	Token     string `json:"token"`
-	Operacion string `json:"operacion"`
+	Username string `json:"username"`
+	Tenant   string `json:"tenant"`
+	Token    string `json:"token"`
+	Options  string `json:"options"`
 }
 
 /*
@@ -72,9 +72,10 @@ func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacio
 	var strHlprSrv strHlprServlet
 	token := *tokenAutenticacion
 
-	strHlprSrv.Operacion = "HLP"
+	strHlprSrv.Options = "HLP"
 	strHlprSrv.Tenant = token.Tenant
 	strHlprSrv.Token = token.Token
+	strHlprSrv.Username = token.Username
 
 	pagesJson, err := json.Marshal(token)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
