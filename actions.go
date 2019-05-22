@@ -77,7 +77,7 @@ func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacio
 	strHlprSrv.Token = token.Token
 	strHlprSrv.Username = token.Username
 
-	pagesJson, err := json.Marshal(token)
+	pagesJson, err := json.Marshal(strHlprSrv)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	url := "https://localhost:8443/NXV/" + codigo + "GoServlet"
 
