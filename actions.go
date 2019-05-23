@@ -13,8 +13,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/xubiosueldos/autenticacion/apiclientautenticacion"
 	"github.com/xubiosueldos/autenticacion/publico"
-	"github.com/xubiosueldos/conexionBD"
+	"github.com/xubiosueldos/conexionBD/apiclientconexionbd"
 	"github.com/xubiosueldos/framework"
 )
 
@@ -40,16 +41,12 @@ func (strhelper) TableName() string {
 
 func getHelper(w http.ResponseWriter, r *http.Request) {
 
-	tokenAutenticacion, tokenError := checkTokenValido(r)
-
-	if tokenError != nil {
-		errorToken(w, tokenError)
-		return
-	} else {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
 
 		params := mux.Vars(r)
 
-		db := obtenerDB(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tokenAutenticacion, "helper", 0, AutomigrateTablasPrivadas)
 		defer db.Close()
 
 		var helper []strhelper
@@ -67,7 +64,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.TokenAutenticacion, codigo string) {
+func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string) {
 
 	var strHlprSrv strHlprServlet
 	token := *tokenAutenticacion
@@ -114,47 +111,6 @@ func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacio
 	framework.RespondJSON(w, http.StatusOK, dataStruct)
 }
 
-func obtenerDB(tokenAutenticacion *publico.TokenAutenticacion) *gorm.DB {
-	token := *tokenAutenticacion
-	tenant := token.Tenant
+func AutomigrateTablasPrivadas(db *gorm.DB) {
 
-	return conexionBD.ConnectBD(tenant)
-}
-
-func errorToken(w http.ResponseWriter, tokenError *publico.Error) {
-	errorToken := *tokenError
-	framework.RespondError(w, errorToken.ErrorCodigo, errorToken.ErrorNombre)
-}
-
-func checkTokenValido(r *http.Request) (*publico.TokenAutenticacion, *publico.Error) {
-
-	var tokenAutenticacion *publico.TokenAutenticacion
-	var tokenError *publico.Error
-
-	url := "http://localhost:8081/check-token"
-
-	req, _ := http.NewRequest("GET", url, nil)
-
-	header := r.Header.Get("Authorization")
-
-	req.Header.Add("Authorization", header)
-
-	res, _ := http.DefaultClient.Do(req)
-
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-
-	if res.StatusCode != 400 {
-
-		// tokenAutenticacion = &(TokenAutenticacion{})
-		tokenAutenticacion = new(publico.TokenAutenticacion)
-		json.Unmarshal([]byte(string(body)), tokenAutenticacion)
-
-	} else {
-		tokenError = new(publico.Error)
-		json.Unmarshal([]byte(string(body)), tokenError)
-
-	}
-
-	return tokenAutenticacion, tokenError
 }
