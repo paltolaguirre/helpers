@@ -34,6 +34,11 @@ type strHlprServlet struct {
 	Options  string `json:"options"`
 }
 
+type requestMono struct {
+	Value interface{}
+	Error error
+}
+
 /*
 func (strhelper) TableName() string {
 	return codigoHelper
@@ -53,9 +58,13 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 		//db.Raw("SELECT * FROM "+params["codigoHelper"]+" WHERE activo = 1 and deleted_at is null").Scan(&helper)
 
+		var requestMono requestMono
+
 		if err := db.Table(params["codigoHelper"]).Where("activo = 1 and deleted_at is null").Select("id,nombre,codigo,descripcion").Scan(&helper).Error; err != nil {
-			requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"])
-			framework.RespondError(w, http.StatusNotFound, err.Error())
+			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"]).Error; err != nil {
+				framework.RespondError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
 			return
 		}
 
@@ -64,7 +73,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string) {
+func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string) *requestMono {
 
 	var strHlprSrv strHlprServlet
 	token := *tokenAutenticacion
@@ -93,8 +102,8 @@ func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacio
 	fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	s := string(body)
-	fmt.Println("BYTES RECIBIDOS :", len(s))
+	str := string(body)
+	fmt.Println("BYTES RECIBIDOS :", len(str))
 
 	fixUtf := func(r rune) rune {
 		if r == utf8.RuneError {
@@ -104,11 +113,12 @@ func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacio
 	}
 
 	var dataStruct []strhelper
-	json.Unmarshal([]byte(strings.Map(fixUtf, s)), &dataStruct)
+	json.Unmarshal([]byte(strings.Map(fixUtf, str)), &dataStruct)
 
 	fmt.Println("BYTES RECIBIDOS :", string(body))
 
 	framework.RespondJSON(w, http.StatusOK, dataStruct)
+	return s
 }
 
 func AutomigrateTablasPrivadas(db *gorm.DB) {
