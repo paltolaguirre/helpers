@@ -60,7 +60,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 		var requestMono requestMono
 
-		if err := db.Table(params["codigoHelper"]).Where("activo = 1 and deleted_at is null").Select("id,nombre,codigo,descripcion").Scan(&helper).Error; err != nil {
+		if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
 			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"]).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
@@ -71,6 +71,11 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		framework.RespondJSON(w, http.StatusOK, helper)
 	}
 
+}
+
+//id,nombre,codigo,descripcion"
+func crearQueryMixta(concepto string, tenant string) string {
+	return "select * from public." + concepto + " as tabla1 where tabla1.deleted_at is null and activo = 1 union all select * from " + tenant + "." + concepto + " as tabla2 where tabla2.deleted_at is null and activo = 1"
 }
 
 func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string) *requestMono {
