@@ -10,6 +10,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/xubiosueldos/framework/configuracion"
+
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -20,7 +22,7 @@ import (
 )
 
 type strhelper struct {
-	ID          string `json:"id"`
+	ID          int    `json:"id"`
 	Nombre      string `json:"nombre"`
 	Codigo      string `json:"codigo"`
 	Descripcion string `json:"descripcion"`
@@ -32,6 +34,7 @@ type strHlprServlet struct {
 	Tenant   string `json:"tenant"`
 	Token    string `json:"token"`
 	Options  string `json:"options"`
+	Id       string `json:"id"`
 }
 
 type requestMono struct {
@@ -61,7 +64,35 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		var requestMono requestMono
 
 		if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
-			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"]).Error; err != nil {
+			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], "").Error; err != nil {
+				framework.RespondError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+			return
+		}
+
+		framework.RespondJSON(w, http.StatusOK, helper)
+	}
+
+}
+
+func getHelperId(w http.ResponseWriter, r *http.Request) {
+
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		params := mux.Vars(r)
+
+		helper_id := params["id"]
+		db := apiclientconexionbd.ObtenerDB(tokenAutenticacion, "helper", 0, AutomigrateTablasPrivadas)
+		defer db.Close()
+
+		var helper strhelper
+
+		var requestMono requestMono
+
+		if err := db.Raw(" select * from (" + crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant) + ") as tabla where tabla.id = " + helper_id).Scan(&helper).Error; err != nil {
+			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], helper_id).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
@@ -78,19 +109,22 @@ func crearQueryMixta(concepto string, tenant string) string {
 	return "select * from public." + concepto + " as tabla1 where tabla1.deleted_at is null and activo = 1 union all select * from " + tenant + "." + concepto + " as tabla2 where tabla2.deleted_at is null and activo = 1"
 }
 
-func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string) *requestMono {
+func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *requestMono {
 
 	var strHlprSrv strHlprServlet
 	token := *tokenAutenticacion
+
+	configuracion := configuracion.GetInstance()
 
 	strHlprSrv.Options = "HLP"
 	strHlprSrv.Tenant = token.Tenant
 	strHlprSrv.Token = token.Token
 	strHlprSrv.Username = token.Username
+	strHlprSrv.Id = id
 
 	pagesJson, err := json.Marshal(strHlprSrv)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	url := "https://localhost:8443/NXV/" + codigo + "GoServlet"
+	url := configuracion.Url + codigo + "GoServlet"
 
 	fmt.Println("URL:>", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(pagesJson))
@@ -122,7 +156,12 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 
 	fmt.Println("BYTES RECIBIDOS :", string(body))
 
-	framework.RespondJSON(w, http.StatusOK, dataStruct)
+	//Para que el json que devuelva quede acorde al que devuelve go
+	if len(dataStruct) == 1 {
+		framework.RespondJSON(w, http.StatusOK, dataStruct[0])
+	} else {
+		framework.RespondJSON(w, http.StatusOK, dataStruct)
+	}
 	return s
 }
 

@@ -33,4 +33,11 @@ var routes = Routes{
 		"/helpers/{codigoHelper}",
 		getHelper,
 	},
+
+	Route{
+		"getHelperId",
+		"GET",
+		"/helpers/{codigoHelper}/{id}",
+		getHelperId,
+	},
 }
