@@ -10,8 +10,6 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/xubiosueldos/framework/configuracion"
-
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -63,12 +61,32 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 		var requestMono requestMono
 
-		if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
+		if obtenerTablaPrivada(params["codigoHelper"]) == "MIXTA" {
+			if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
+				framework.RespondError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+		}
+
+		if obtenerTablaPrivada(params["codigoHelper"]) == "PURAPUBLICA" {
+			if err := db.Raw(crearQueryPublica(params["codigoHelper"])).Scan(&helper).Error; err != nil {
+				framework.RespondError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+		}
+
+		if obtenerTablaPrivada(params["codigoHelper"]) == "PURAPRIVADA" {
+			if err := db.Raw(crearQueryPrivada(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
+				framework.RespondError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+		}
+
+		if obtenerTablaPrivada(params["codigoHelper"]) == "MONOLITICO" {
 			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], "").Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
-			return
 		}
 
 		framework.RespondJSON(w, http.StatusOK, helper)
@@ -104,17 +122,41 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//TODO MIGRAR TODO ESTO AL ARCHIVO DE CONFIGURACION
+func obtenerTablaPrivada(concepto string) string {
+	switch os := concepto; os {
+	case "legajo":
+		return "PURAPRIVADA"
+	case "concepto":
+		return "MIXTA"
+	case "pais":
+		return "PURAPUBLICA"
+	case "provincia":
+		return "PURAPUBLICA"
+	case "cuenta":
+		return "MONOLITICO"
+	default:
+		return "MIXTA"
+	}
+}
+
 //id,nombre,codigo,descripcion"
 func crearQueryMixta(concepto string, tenant string) string {
-	return "select * from public." + concepto + " as tabla1 where tabla1.deleted_at is null and activo = 1 union all select * from " + tenant + "." + concepto + " as tabla2 where tabla2.deleted_at is null and activo = 1"
+	return crearQueryPublica(concepto) + " union all " + crearQueryPrivada(concepto, tenant)
+}
+
+func crearQueryPublica(concepto string) string {
+	return "select * from public." + concepto + " as tabla1 where tabla1.deleted_at is null and activo = 1"
+}
+
+func crearQueryPrivada(concepto string, tenant string) string {
+	return "select * from " + tenant + "." + concepto + " as tabla2 where tabla2.deleted_at is null and activo = 1"
 }
 
 func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *requestMono {
 
 	var strHlprSrv strHlprServlet
 	token := *tokenAutenticacion
-
-	configuracion := configuracion.GetInstance()
 
 	strHlprSrv.Options = "HLP"
 	strHlprSrv.Tenant = token.Tenant
@@ -124,7 +166,7 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 
 	pagesJson, err := json.Marshal(strHlprSrv)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	url := configuracion.Url + codigo + "GoServlet"
+	url := "http://localhost:8080/NXV/" + codigo + "GoServlet"
 
 	fmt.Println("URL:>", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(pagesJson))
