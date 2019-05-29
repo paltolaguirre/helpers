@@ -122,6 +122,8 @@ github.com/xubiosueldos/framework v0.0.0-20190528182729-fd1e8cd77550 h1:j151B6UX
 github.com/xubiosueldos/framework v0.0.0-20190528182729-fd1e8cd77550/go.mod h1:Atdymo+Iri+Mn8+VPhqIyb6dW/S/q3xPgobPRPBirzs=
 github.com/xubiosueldos/framework v0.0.0-20190528205049-f5e7c42b2284 h1:bwqbIZ4HVb2TxP7jRwkt8Y6KFe/j4FsY87P5UGn9nE0=
 github.com/xubiosueldos/framework v0.0.0-20190528205049-f5e7c42b2284/go.mod h1:Atdymo+Iri+Mn8+VPhqIyb6dW/S/q3xPgobPRPBirzs=
+github.com/xubiosueldos/framework v0.0.0-20190529165238-2c881b4a9ef0 h1:aC9Tep+XkgGGtzvVS69GMxuUmDKWSsI1XS1jfb417Gk=
+github.com/xubiosueldos/framework v0.0.0-20190529165238-2c881b4a9ef0/go.mod h1:Atdymo+Iri+Mn8+VPhqIyb6dW/S/q3xPgobPRPBirzs=
 github.com/xubiosueldos/legajo v1.0.1-0.20190412135527-8b5c7d2da8bc h1:HHu5ULXk3Br6gJL32rNSpCmOj+QGMO5Si8oVFxJfU/E=
 github.com/xubiosueldos/legajo v1.0.1-0.20190412135527-8b5c7d2da8bc/go.mod h1:pzixxpkvIskZfYPK7tCXi7RKkThZrZw0CdOfnWUaIOk=
 go.opencensus.io v0.20.1/go.mod h1:6WKK9ahsWS3RSO+PY9ZHZUfv2irvY6gN279GOPZjmmk=

@@ -17,6 +17,7 @@ import (
 	"github.com/xubiosueldos/autenticacion/publico"
 	"github.com/xubiosueldos/conexionBD/apiclientconexionbd"
 	"github.com/xubiosueldos/framework"
+	"github.com/xubiosueldos/framework/configuracion"
 )
 
 type strhelper struct {
@@ -166,7 +167,9 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 
 	pagesJson, err := json.Marshal(strHlprSrv)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	url := "http://localhost:8080/NXV/" + codigo + "GoServlet"
+	url := configuracion.GetUrlMonolitico() + codigo + "GoServlet"
+
+	//url := "http://localhost:8080/NXV/" + codigo + "GoServlet"
 
 	fmt.Println("URL:>", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(pagesJson))
