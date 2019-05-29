@@ -65,6 +65,8 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 			if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
+			} else {
+				framework.RespondJSON(w, http.StatusOK, helper)
 			}
 		}
 
@@ -72,6 +74,8 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 			if err := db.Raw(crearQueryPublica(params["codigoHelper"])).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
+			} else {
+				framework.RespondJSON(w, http.StatusOK, helper)
 			}
 		}
 
@@ -79,6 +83,8 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 			if err := db.Raw(crearQueryPrivada(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
+			} else {
+				framework.RespondJSON(w, http.StatusOK, helper)
 			}
 		}
 
@@ -89,7 +95,6 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		framework.RespondJSON(w, http.StatusOK, helper)
 	}
 
 }
