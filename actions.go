@@ -174,8 +174,6 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	url := configuracion.GetUrlMonolitico() + codigo + "GoServlet"
 
-	//url := "http://localhost:8080/NXV/" + codigo + "GoServlet"
-
 	fmt.Println("URL:>", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(pagesJson))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
