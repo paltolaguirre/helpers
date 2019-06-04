@@ -54,7 +54,6 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 
 		db := apiclientconexionbd.ObtenerDB(tokenAutenticacion, "helper", 0, AutomigrateTablasPrivadas)
-		defer db.Close()
 
 		var helper []strhelper
 
@@ -65,7 +64,6 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		if obtenerTablaPrivada(params["codigoHelper"]) == "MIXTA" {
 			if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
-				return
 			} else {
 				framework.RespondJSON(w, http.StatusOK, helper)
 			}
@@ -74,7 +72,6 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		if obtenerTablaPrivada(params["codigoHelper"]) == "PURAPUBLICA" {
 			if err := db.Raw(crearQueryPublica(params["codigoHelper"])).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
-				return
 			} else {
 				framework.RespondJSON(w, http.StatusOK, helper)
 			}
@@ -83,7 +80,6 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		if obtenerTablaPrivada(params["codigoHelper"]) == "PURAPRIVADA" {
 			if err := db.Raw(crearQueryPrivada(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
-				return
 			} else {
 				framework.RespondJSON(w, http.StatusOK, helper)
 			}
@@ -95,7 +91,6 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-
 	}
 
 }
@@ -139,8 +134,32 @@ func obtenerTablaPrivada(concepto string) string {
 		return "PURAPUBLICA"
 	case "provincia":
 		return "PURAPUBLICA"
+	case "localidad":
+		return "PURAPUBLICA"
 	case "cuenta":
 		return "MONOLITICO"
+	case "liquidacion":
+		return "PURAPRIVADA"
+	case "hijo":
+		return "PURAPRIVADA"
+	case "conyuge":
+		return "PURAPRIVADA"
+	case "obrasocial":
+		return "PURAPUBLICA"
+	case "condicion":
+		return "PURAPUBLICA"
+	case "centrodecosto":
+		return "PURAPUBLICA"
+	case "condicionsiniestrado":
+		return "PURAPUBLICA"
+	case "conveniocolectivo":
+		return "PURAPUBLICA"
+	case "modalidadcontratacion":
+		return "PURAPUBLICA"
+	case "situacion":
+		return "PURAPUBLICA"
+	case "zona":
+		return "PURAPUBLICA"
 	default:
 		return "MIXTA"
 	}
