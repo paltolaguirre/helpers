@@ -88,7 +88,6 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		if obtenerTablaPrivada(params["codigoHelper"]) == "MONOLITICO" {
 			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], "").Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
-				return
 			}
 		}
 	}
