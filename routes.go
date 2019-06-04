@@ -33,11 +33,16 @@ var routes = Routes{
 		"/api/helper/helpers/{codigoHelper}",
 		getHelper,
 	},
-
 	Route{
 		"getHelperId",
 		"GET",
 		"/api/helper/helpers/{codigoHelper}/{id}",
 		getHelperId,
+	},
+	Route{
+		"Healthy",
+		"GET",
+		"/api/helper/healthy",
+		Healthy,
 	},
 }
