@@ -13,7 +13,7 @@ func main() {
 
 	router := newRouter()
 
-	server := http.ListenAndServe(":"+configuracion.Puertomicroseriviciohelpers, router)
+	server := http.ListenAndServe(":"+configuracion.Puertomicroserviciohelpers, router)
 
 	log.Fatal(server)
 
