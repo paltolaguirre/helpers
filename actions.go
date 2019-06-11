@@ -58,7 +58,10 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 		params := mux.Vars(r)
 
-		db := apiclientconexionbd.ObtenerDB(tokenAutenticacion, "helper", 0, AutomigrateTablasPrivadas)
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
+
+		defer db.Close()
 
 		var helper []strhelper
 
@@ -107,7 +110,10 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 
 		helper_id := params["id"]
-		db := apiclientconexionbd.ObtenerDB(tokenAutenticacion, "helper", 0, AutomigrateTablasPrivadas)
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
+
 		defer db.Close()
 
 		var helper strhelper
@@ -199,18 +205,31 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 
 	fmt.Println("URL:>", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(pagesJson))
+
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 
 	client := &http.Client{}
+
 	resp, err := client.Do(req)
+
 	if err != nil {
-		panic(err)
+		fmt.Println("Error: ", err)
 	}
+
 	defer resp.Body.Close()
 
 	fmt.Println("response Status:", resp.Status)
 	fmt.Println("response Headers:", resp.Header)
-	body, _ := ioutil.ReadAll(resp.Body)
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
 
 	str := string(body)
 	fmt.Println("BYTES RECIBIDOS :", len(str))
