@@ -61,7 +61,8 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
 		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
-		defer db.Close()
+		//defer db.Close()
+		defer apiclientconexionbd.CerrarDB(db)
 
 		var helper []strhelper
 
@@ -114,7 +115,8 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
 		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
-		defer db.Close()
+		//defer db.Close()
+		defer apiclientconexionbd.CerrarDB(db)
 
 		var helper strhelper
 
