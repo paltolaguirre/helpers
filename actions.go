@@ -48,7 +48,7 @@ func (strhelper) TableName() string {
 
 // Sirve para controlar si el server esta OK
 func Healthy(writer http.ResponseWriter, request *http.Request) {
-	writer.Write([]byte("Healthy"))
+	writer.Write([]byte("Healthy."))
 }
 
 func getHelper(w http.ResponseWriter, r *http.Request) {
