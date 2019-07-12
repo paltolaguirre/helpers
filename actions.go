@@ -178,16 +178,16 @@ func obtenerTablaPrivada(concepto string) string {
 }
 
 //id,nombre,codigo,descripcion"
-func crearQueryMixta(concepto string, tenant string) string {
-	return crearQueryPublica(concepto) + " union all " + crearQueryPrivada(concepto, tenant)
+func crearQueryMixta(codigo string, tenant string) string {
+	return crearQueryPublica(codigo) + " union all " + crearQueryPrivada(codigo, tenant)
 }
 
-func crearQueryPublica(concepto string) string {
-	return "select * from public." + concepto + " as tabla1 where tabla1.deleted_at is null and activo = 1"
+func crearQueryPublica(codigo string) string {
+	return "select * from public." + codigo + " as tabla1 where tabla1.deleted_at is null and activo = 1"
 }
 
-func crearQueryPrivada(concepto string, tenant string) string {
-	return "select * from " + tenant + "." + concepto + " as tabla2 where tabla2.deleted_at is null and activo = 1"
+func crearQueryPrivada(codigo string, tenant string) string {
+	return "select * from " + tenant + "." + codigo + " as tabla2 where tabla2.deleted_at is null and activo = 1"
 }
 
 func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *requestMono {
