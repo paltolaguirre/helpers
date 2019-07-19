@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strings"
 	"unicode/utf8"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -39,6 +40,16 @@ type strHlprServlet struct {
 type requestMono struct {
 	Value interface{}
 	Error error
+}
+
+type strempresa struct {
+	ID          int    `json:"id"`
+	Nombre      string `json:"nombre"`
+	Codigo      string `json:"codigo"`
+	Descripcion string `json:"descripcion"`
+	Domicilio	string `json:"domicilio"`
+	Localidad	string `json:"localidad"`
+	Cuit		string `json:"cuit"`
 }
 
 /*
@@ -279,5 +290,49 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 }
 
 func AutomigrateTablasPrivadas(db *gorm.DB) {
+
+}
+
+func getEmpresaId(w http.ResponseWriter, r *http.Request) {
+
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		params := mux.Vars(r)
+
+		helper_id := params["id"]
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
+
+		//defer db.Close()
+		defer apiclientconexionbd.CerrarDB(db)
+
+		var empresa strempresa
+
+		/*var requestMono requestMono
+
+		if err := db.Raw(" select * from (" + crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant) + ") as tabla where tabla.id = " + helper_id).Scan(&helper).Error; err != nil {
+			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], helper_id).Error; err != nil {
+				framework.RespondError(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+			return
+		}*/
+		id, err := strconv.Atoi(helper_id)
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
+
+		empresa.ID = id
+		empresa.Nombre = "Mi Empresa"
+		empresa.Codigo = "TNT_914"
+		empresa.Descripcion = "Empresa Online confiable de venta de garantias"
+		empresa.Domicilio = "Av. Siempre Viva 1234"
+		empresa.Localidad = "C.A.B.A"
+		empresa.Cuit = "12-12123123-1"
+
+		framework.RespondJSON(w, http.StatusOK, empresa)
+	}
 
 }
