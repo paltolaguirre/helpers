@@ -71,7 +71,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		var requestMono requestMono
 
 		if obtenerTablaPrivada(params["codigoHelper"]) == "MIXTA" {
-			if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
+			if err := db.Raw(crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant, r)).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 			} else {
 				framework.RespondJSON(w, http.StatusOK, helper)
@@ -79,7 +79,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if obtenerTablaPrivada(params["codigoHelper"]) == "PURAPUBLICA" {
-			if err := db.Raw(crearQueryPublica(params["codigoHelper"])).Scan(&helper).Error; err != nil {
+			if err := db.Raw(crearQueryPublica(params["codigoHelper"], r)).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 			} else {
 				framework.RespondJSON(w, http.StatusOK, helper)
@@ -87,7 +87,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if obtenerTablaPrivada(params["codigoHelper"]) == "PURAPRIVADA" {
-			if err := db.Raw(crearQueryPrivada(params["codigoHelper"], tokenAutenticacion.Tenant)).Scan(&helper).Error; err != nil {
+			if err := db.Raw(crearQueryPrivada(params["codigoHelper"], tokenAutenticacion.Tenant, r)).Scan(&helper).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 			} else {
 				framework.RespondJSON(w, http.StatusOK, helper)
@@ -122,7 +122,7 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 
 		var requestMono requestMono
 
-		if err := db.Raw(" select * from (" + crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant) + ") as tabla where tabla.id = " + helper_id).Scan(&helper).Error; err != nil {
+		if err := db.Raw(" select * from (" + crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant, r) + ") as tabla where tabla.id = " + helper_id).Scan(&helper).Error; err != nil {
 			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], helper_id).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
@@ -133,6 +133,27 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 		framework.RespondJSON(w, http.StatusOK, helper)
 	}
 
+}
+
+func obtenerFiltroTabla(codigo string, r *http.Request) string {
+	var queryFilter string = ""
+	switch os := codigo; os {
+	case "provincia":
+		{
+			if r.URL.Query()["paisid"] != nil {
+				queryFilter += " and paisid =" + r.URL.Query()["paisid"][0]
+			}
+		}
+	case "localidad":
+		{
+			if r.URL.Query()["provinciaid"] != nil {
+				queryFilter += " and provinciaid =" + r.URL.Query()["provinciaid"][0]
+			}
+		}
+	default:
+		return ""
+	}
+	return queryFilter
 }
 
 //TODO MIGRAR TODO ESTO AL ARCHIVO DE CONFIGURACION
@@ -178,16 +199,16 @@ func obtenerTablaPrivada(concepto string) string {
 }
 
 //id,nombre,codigo,descripcion"
-func crearQueryMixta(codigo string, tenant string) string {
-	return crearQueryPublica(codigo) + " union all " + crearQueryPrivada(codigo, tenant)
+func crearQueryMixta(codigo string, tenant string, r *http.Request) string {
+	return crearQueryPublica(codigo, r) + " union all " + crearQueryPrivada(codigo, tenant, r)
 }
 
-func crearQueryPublica(codigo string) string {
-	return "select * from public." + codigo + " as tabla1 where tabla1.deleted_at is null and activo = 1"
+func crearQueryPublica(codigo string, r *http.Request) string {
+	return "select * from public." + codigo + " as tabla1 where tabla1.deleted_at is null and activo = 1 " + obtenerFiltroTabla(codigo, r)
 }
 
-func crearQueryPrivada(codigo string, tenant string) string {
-	return "select * from " + tenant + "." + codigo + " as tabla2 where tabla2.deleted_at is null and activo = 1"
+func crearQueryPrivada(codigo string, tenant string, r *http.Request) string {
+	return "select * from " + tenant + "." + codigo + " as tabla2 where tabla2.deleted_at is null and activo = 1 " + obtenerFiltroTabla(codigo, r)
 }
 
 func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *requestMono {
