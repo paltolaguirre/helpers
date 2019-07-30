@@ -49,11 +49,12 @@ type strEmpresa struct {
 	Domicilio              string `json:"domicilio"`
 	Localidad              string `json:"localidad"`
 	Cuit                   string `json:"cuit"`
-	Domiciliodeexplotacion string `json:"domiciliodeexplotacion"`
 	Tipodeempresa          int    `json:"tipodeempresa"`
+	Actividad              int    `json:"actividad"`
 	Zona                   int    `json:"zona"`
-	Artcontratada          int    `json:"artcontratada"`
 	Obrasocial             int    `json:"obrasocial"`
+	Artcontratada          int    `json:"artcontratada"`
+	Domiciliodeexplotacion string `json:"domiciliodeexplotacion"`
 	Reducevalor            int    `json:"reducevalor"`
 }
 
