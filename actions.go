@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"strings"
 	"unicode/utf8"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -42,14 +41,21 @@ type requestMono struct {
 	Error error
 }
 
-type strempresa struct {
-	ID          int    `json:"id"`
-	Nombre      string `json:"nombre"`
-	Codigo      string `json:"codigo"`
-	Descripcion string `json:"descripcion"`
-	Domicilio	string `json:"domicilio"`
-	Localidad	string `json:"localidad"`
-	Cuit		string `json:"cuit"`
+type strEmpresa struct {
+	ID                     int    `json:"id"`
+	Nombre                 string `json:"nombre"`
+	Codigo                 string `json:"codigo"`
+	Descripcion            string `json:"descripcion"`
+	Domicilio              string `json:"domicilio"`
+	Localidad              string `json:"localidad"`
+	Cuit                   string `json:"cuit"`
+	Tipodeempresa          int    `json:"tipodeempresa"`
+	Actividad              int    `json:"actividad"`
+	Zona                   int    `json:"zona"`
+	Obrasocial             int    `json:"obrasocial"`
+	Artcontratada          int    `json:"artcontratada"`
+	Domiciliodeexplotacion string `json:"domiciliodeexplotacion"`
+	Reducevalor            int    `json:"reducevalor"`
 }
 
 /*
@@ -68,7 +74,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 	if tokenValido {
 
 		params := mux.Vars(r)
-
+		fmt.Println("La URL accedida: " + r.URL.String() + "/" + params["codigoHelper"])
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
 		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
@@ -106,7 +112,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if obtenerTablaPrivada(params["codigoHelper"]) == "MONOLITICO" {
-			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], "").Error; err != nil {
+			if err := requestMono.requestHelpersMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], "").Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 			}
 		}
@@ -134,7 +140,7 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 		var requestMono requestMono
 
 		if err := db.Raw(" select * from (" + crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant) + ") as tabla where tabla.id = " + helper_id).Scan(&helper).Error; err != nil {
-			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], helper_id).Error; err != nil {
+			if err := requestMono.requestHelpersMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], helper_id).Error; err != nil {
 				framework.RespondError(w, http.StatusInternalServerError, err.Error())
 				return
 			}
@@ -201,7 +207,7 @@ func crearQueryPrivada(codigo string, tenant string) string {
 	return "select * from " + tenant + "." + codigo + " as tabla2 where tabla2.deleted_at is null and activo = 1"
 }
 
-func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *requestMono {
+func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *http.Response {
 
 	var strHlprSrv strHlprServlet
 	token := *tokenAutenticacion
@@ -232,6 +238,12 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}
+	return resp
+}
+
+func (s *requestMono) requestHelpersMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *requestMono {
+
+	resp := requestMonolitico(w, r, tokenAutenticacion, codigo, id)
 
 	defer resp.Body.Close()
 
@@ -268,6 +280,45 @@ func (s *requestMono) requestMonolitico(w http.ResponseWriter, r *http.Request, 
 	return s
 }
 
+func (emp *strEmpresa) requestEmpresaMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *strEmpresa {
+
+	resp := requestMonolitico(w, r, tokenAutenticacion, codigo, id)
+
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+
+	str := string(body)
+	fmt.Println("BYTES RECIBIDOS :", len(str))
+
+	fixUtf := func(r rune) rune {
+		if r == utf8.RuneError {
+			return -1
+		}
+		return r
+	}
+
+	var dataStruct []strEmpresa
+	json.Unmarshal([]byte(strings.Map(fixUtf, str)), &dataStruct)
+
+	fmt.Println("BYTES RECIBIDOS :", string(body))
+
+	//Para que el json que devuelva quede acorde al que devuelve go
+	if len(dataStruct) == 1 {
+		framework.RespondJSON(w, http.StatusOK, dataStruct[0])
+	} else {
+		framework.RespondJSON(w, http.StatusOK, dataStruct)
+	}
+	return emp
+}
+
 func AutomigrateTablasPrivadas(db *gorm.DB) {
 
 }
@@ -280,38 +331,15 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 
 		helper_id := params["id"]
-
+		fmt.Println("La URL accedida: " + r.URL.String() + "/tnt_" + helper_id)
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
 		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
-		//defer db.Close()
 		defer apiclientconexionbd.CerrarDB(db)
 
-		var empresa strempresa
+		var empresa strEmpresa
+		empresa.requestEmpresaMonolitico(w, r, tokenAutenticacion, "empresa", "")
 
-		/*var requestMono requestMono
-
-		if err := db.Raw(" select * from (" + crearQueryMixta(params["codigoHelper"], tokenAutenticacion.Tenant) + ") as tabla where tabla.id = " + helper_id).Scan(&helper).Error; err != nil {
-			if err := requestMono.requestMonolitico(w, r, tokenAutenticacion, params["codigoHelper"], helper_id).Error; err != nil {
-				framework.RespondError(w, http.StatusInternalServerError, err.Error())
-				return
-			}
-			return
-		}*/
-		id, err := strconv.Atoi(helper_id)
-		if err != nil {
-			fmt.Println("Error: ", err)
-		}
-
-		empresa.ID = id
-		empresa.Nombre = "Mi Empresa"
-		empresa.Codigo = "TNT_914"
-		empresa.Descripcion = "Empresa Online confiable de venta de garantias"
-		empresa.Domicilio = "Av. Siempre Viva 1234"
-		empresa.Localidad = "C.A.B.A"
-		empresa.Cuit = "12-12123123-1"
-
-		framework.RespondJSON(w, http.StatusOK, empresa)
 	}
 
 }

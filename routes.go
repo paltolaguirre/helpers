@@ -54,7 +54,7 @@ var routes = Routes{
 	Route{
 		"getEmpresaId",
 		"GET",
-		"/api/empresa/empresas/{id}",
+		"/api/empresa/empresas",
 		getEmpresaId,
 	},
 }
