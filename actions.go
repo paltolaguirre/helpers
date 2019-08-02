@@ -52,6 +52,7 @@ type strEmpresa struct {
 	Tipodeempresa          int    `json:"tipodeempresa"`
 	Actividad              int    `json:"actividad"`
 	Zona                   int    `json:"zona"`
+	Zonanombre             string `json:"zonanombre"`
 	Obrasocial             int    `json:"obrasocial"`
 	Artcontratada          int    `json:"artcontratada"`
 	Domiciliodeexplotacion string `json:"domiciliodeexplotacion"`
