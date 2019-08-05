@@ -51,6 +51,7 @@ type strEmpresa struct {
 	Cuit                   string `json:"cuit"`
 	Tipodeempresa          int    `json:"tipodeempresa"`
 	Actividad              int    `json:"actividad"`
+	Actividadnombre        string `json:"actividadnombre"`
 	Zona                   int    `json:"zona"`
 	Zonanombre             string `json:"zonanombre"`
 	Obrasocial             int    `json:"obrasocial"`
@@ -329,10 +330,7 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
 	if tokenValido {
 
-		params := mux.Vars(r)
-
-		helper_id := params["id"]
-		fmt.Println("La URL accedida: " + r.URL.String() + "/tnt_" + helper_id)
+		fmt.Println("La URL accedida: " + r.URL.String())
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
 		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
