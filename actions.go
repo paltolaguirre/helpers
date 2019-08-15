@@ -169,6 +169,8 @@ func obtenerTablaPrivada(concepto string) string {
 		return "PURAPUBLICA"
 	case "cuenta":
 		return "MONOLITICO"
+	case "banco":
+		return "MONOLITICO"
 	case "liquidacion":
 		return "PURAPRIVADA"
 	case "hijo":
@@ -180,7 +182,7 @@ func obtenerTablaPrivada(concepto string) string {
 	case "condicion":
 		return "PURAPUBLICA"
 	case "centrodecosto":
-		return "PURAPUBLICA"
+		return "MONOLITICO"
 	case "condicionsiniestrado":
 		return "PURAPUBLICA"
 	case "conveniocolectivo":
