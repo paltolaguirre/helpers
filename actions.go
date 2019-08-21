@@ -160,7 +160,7 @@ func obtenerTablaPrivada(concepto string) string {
 	case "legajo":
 		return "PURAPRIVADA"
 	case "concepto":
-		return "MIXTA"
+		return "PURAPRIVADA"
 	case "pais":
 		return "PURAPUBLICA"
 	case "provincia":
