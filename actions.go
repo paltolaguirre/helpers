@@ -193,6 +193,12 @@ func obtenerTablaPrivada(concepto string) string {
 		return "PURAPUBLICA"
 	case "zona":
 		return "PURAPUBLICA"
+
+	case "liquidacioncondicionpago":
+		return "PURAPUBLICA"
+
+	case "liquidaciontipo":
+		return "PURAPUBLICA"
 	default:
 		return "MIXTA"
 	}
@@ -276,11 +282,9 @@ func (s *requestMono) requestHelpersMonolitico(w http.ResponseWriter, r *http.Re
 	fmt.Println("BYTES RECIBIDOS :", string(body))
 
 	//Para que el json que devuelva quede acorde al que devuelve go
-	if len(dataStruct) == 1 {
-		framework.RespondJSON(w, http.StatusOK, dataStruct[0])
-	} else {
-		framework.RespondJSON(w, http.StatusOK, dataStruct)
-	}
+
+	framework.RespondJSON(w, http.StatusOK, dataStruct)
+
 	return s
 }
 
@@ -309,17 +313,14 @@ func (emp *strEmpresa) requestEmpresaMonolitico(w http.ResponseWriter, r *http.R
 		return r
 	}
 
-	var dataStruct []strEmpresa
+	var dataStruct strEmpresa
 	json.Unmarshal([]byte(strings.Map(fixUtf, str)), &dataStruct)
 
 	fmt.Println("BYTES RECIBIDOS :", string(body))
 
 	//Para que el json que devuelva quede acorde al que devuelve go
-	if len(dataStruct) == 1 {
-		framework.RespondJSON(w, http.StatusOK, dataStruct[0])
-	} else {
-		framework.RespondJSON(w, http.StatusOK, dataStruct)
-	}
+
+	framework.RespondJSON(w, http.StatusOK, dataStruct)
 	return emp
 }
 
