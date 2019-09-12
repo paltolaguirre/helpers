@@ -11,10 +11,9 @@ import (
 	"unicode/utf8"
 
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/xubiosueldos/autenticacion/apiclientautenticacion"
-	"github.com/xubiosueldos/autenticacion/publico"
+	"github.com/xubiosueldos/conexionBD/Autenticacion/structAutenticacion"
 	"github.com/xubiosueldos/conexionBD/apiclientconexionbd"
 	"github.com/xubiosueldos/framework"
 	"github.com/xubiosueldos/framework/configuracion"
@@ -78,7 +77,7 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 		fmt.Println("La URL accedida: " + r.URL.String() + "/" + params["codigoHelper"])
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0)
 
 		//defer db.Close()
 		defer apiclientconexionbd.CerrarDB(db)
@@ -132,7 +131,7 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 		helper_id := params["id"]
 
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0)
 
 		//defer db.Close()
 		defer apiclientconexionbd.CerrarDB(db)
@@ -217,7 +216,7 @@ func crearQueryPrivada(codigo string, tenant string) string {
 	return "select * from " + tenant + "." + codigo + " as tabla2 where tabla2.deleted_at is null and activo = 1"
 }
 
-func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *http.Response {
+func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *structAutenticacion.Security, codigo string, id string) *http.Response {
 
 	var strHlprSrv strHlprServlet
 	token := *tokenAutenticacion
@@ -251,7 +250,7 @@ func requestMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacio
 	return resp
 }
 
-func (s *requestMono) requestHelpersMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *requestMono {
+func (s *requestMono) requestHelpersMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *structAutenticacion.Security, codigo string, id string) *requestMono {
 
 	resp := requestMonolitico(w, r, tokenAutenticacion, codigo, id)
 
@@ -288,7 +287,7 @@ func (s *requestMono) requestHelpersMonolitico(w http.ResponseWriter, r *http.Re
 	return s
 }
 
-func (emp *strEmpresa) requestEmpresaMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *publico.Security, codigo string, id string) *strEmpresa {
+func (emp *strEmpresa) requestEmpresaMonolitico(w http.ResponseWriter, r *http.Request, tokenAutenticacion *structAutenticacion.Security, codigo string, id string) *strEmpresa {
 
 	resp := requestMonolitico(w, r, tokenAutenticacion, codigo, id)
 
@@ -324,10 +323,6 @@ func (emp *strEmpresa) requestEmpresaMonolitico(w http.ResponseWriter, r *http.R
 	return emp
 }
 
-func AutomigrateTablasPrivadas(db *gorm.DB) {
-
-}
-
 func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 
 	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
@@ -335,7 +330,7 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("La URL accedida: " + r.URL.String())
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0)
 
 		defer apiclientconexionbd.CerrarDB(db)
 
