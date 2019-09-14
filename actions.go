@@ -76,10 +76,13 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 		params := mux.Vars(r)
 		fmt.Println("La URL accedida: " + r.URL.String() + "/" + params["codigoHelper"])
-		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0)
+		/*tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
-		//defer db.Close()
+		//defer db.Close()*/
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant)
+
 		defer apiclientconexionbd.CerrarDB(db)
 
 		var helper []strhelper
@@ -130,10 +133,12 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 
 		helper_id := params["id"]
 
-		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0)
+		/*tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
-		//defer db.Close()
+		//defer db.Close()*/
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant)
 		defer apiclientconexionbd.CerrarDB(db)
 
 		var helper strhelper
@@ -329,8 +334,10 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 	if tokenValido {
 
 		fmt.Println("La URL accedida: " + r.URL.String())
+		/*tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)*/
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0)
+		db := apiclientconexionbd.ObtenerDB(tenant)
 
 		defer apiclientconexionbd.CerrarDB(db)
 
