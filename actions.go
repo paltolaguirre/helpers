@@ -13,8 +13,8 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/xubiosueldos/autenticacion/apiclientautenticacion"
+	"github.com/xubiosueldos/conexionBD"
 	"github.com/xubiosueldos/conexionBD/Autenticacion/structAutenticacion"
-	"github.com/xubiosueldos/conexionBD/apiclientconexionbd"
 	"github.com/xubiosueldos/framework"
 	"github.com/xubiosueldos/framework/configuracion"
 )
@@ -76,14 +76,11 @@ func getHelper(w http.ResponseWriter, r *http.Request) {
 
 		params := mux.Vars(r)
 		fmt.Println("La URL accedida: " + r.URL.String() + "/" + params["codigoHelper"])
-		/*tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
 
-		//defer db.Close()*/
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant)
+		db := conexionBD.ObtenerDB(tenant)
 
-		defer apiclientconexionbd.CerrarDB(db)
+		defer conexionBD.CerrarDB(db)
 
 		var helper []strhelper
 
@@ -133,13 +130,9 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 
 		helper_id := params["id"]
 
-		/*tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)
-
-		//defer db.Close()*/
 		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant)
-		defer apiclientconexionbd.CerrarDB(db)
+		db := conexionBD.ObtenerDB(tenant)
+		defer conexionBD.CerrarDB(db)
 
 		var helper strhelper
 
@@ -334,12 +327,11 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 	if tokenValido {
 
 		fmt.Println("La URL accedida: " + r.URL.String())
-		/*tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant, "helper", 0, AutomigrateTablasPrivadas)*/
-		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
-		db := apiclientconexionbd.ObtenerDB(tenant)
 
-		defer apiclientconexionbd.CerrarDB(db)
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
 
 		var empresa strEmpresa
 		empresa.requestEmpresaMonolitico(w, r, tokenAutenticacion, "empresa", "")
