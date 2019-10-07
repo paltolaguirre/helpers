@@ -176,6 +176,8 @@ func obtenerTablaPrivada(concepto string) string {
 		return "PURAPRIVADA"
 	case "obrasocial":
 		return "PURAPUBLICA"
+	case "estadocivil":
+		return "PURAPUBLICA"
 	case "condicion":
 		return "PURAPUBLICA"
 	case "centrodecosto":
