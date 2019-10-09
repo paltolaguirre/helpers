@@ -196,8 +196,8 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 
 		defer conexionBD.CerrarDB(db)
 
-		monoliticComunication.Obtenerdatosempresa(w, r, tokenAutenticacion, "empresa", "")
-
+		dataempresa := monoliticComunication.Obtenerdatosempresa(w, r, tokenAutenticacion)
+		framework.RespondJSON(w, http.StatusOK, dataempresa)
 	}
 
 }
