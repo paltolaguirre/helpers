@@ -34,6 +34,12 @@ var routes = Routes{
 		Healthy,
 	},
 	Route{
+		"getHelperConcepto",
+		"GET",
+		"/api/helper/helpers/concepto",
+		getHelperConcepto,
+	},
+	Route{
 		"getHelper",
 		"GET",
 		"/api/helper/helpers/{codigoHelper}",

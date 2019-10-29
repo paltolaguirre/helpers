@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/xubiosueldos/conexionBD/Concepto/structConcepto"
 	"github.com/xubiosueldos/conexionBD/Helper/structHelper"
 	"github.com/xubiosueldos/monoliticComunication"
 
@@ -126,8 +127,6 @@ func obtenerTablaPrivada(concepto string) string {
 	switch os := concepto; os {
 	case "legajo":
 		return "PURAPRIVADA"
-	case "concepto":
-		return "PURAPRIVADA"
 	case "pais":
 		return "PURAPUBLICA"
 	case "provincia":
@@ -202,4 +201,50 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 		framework.RespondJSON(w, http.StatusOK, dataempresa)
 	}
 
+}
+
+func getHelperConcepto(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		p_tipoconcepto := r.URL.Query()["tipoconcepto"]
+		p_solonovedades := r.URL.Query()["solonovedades"]
+
+		var conceptos []structConcepto.Concepto
+
+		var sql string
+		var arrayCondiciones []string
+
+		if p_tipoconcepto != nil {
+			condicionconcepto := "(tipoliquidacion.codigo = '" + p_tipoconcepto[0] + "')"
+			arrayCondiciones = append(arrayCondiciones, condicionconcepto)
+		}
+
+		if p_solonovedades != nil && p_solonovedades[0] != "false" {
+			condicionsolonovedades := "(esnovedad = " + p_solonovedades[0] + ")"
+			arrayCondiciones = append(arrayCondiciones, condicionsolonovedades)
+		}
+		condicion := ""
+		if len(arrayCondiciones) > 0 {
+			condicion = " WHERE "
+			for i := 0; i < len(arrayCondiciones); i++ {
+				condicion = condicion + arrayCondiciones[i]
+				if i+1 != len(arrayCondiciones) {
+					condicion = condicion + " AND "
+				}
+			}
+		}
+		sql = "SELECT * FROM CONCEPTO INNER JOIN tipoliquidacion ON concepto.tipoliquidacionid = tipoliquidacion.id" + condicion
+
+		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptos)
+
+		framework.RespondJSON(w, http.StatusOK, conceptos)
+	}
 }
