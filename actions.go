@@ -167,7 +167,7 @@ func obtenerTablaPrivada(concepto string) string {
 
 	case "liquidaciontipo":
 		return "PURAPUBLICA"
-	case "tipoliquidacion":
+	case "tipoconcepto":
 		return "PURAPUBLICA"
 	default:
 		return "MIXTA"
@@ -225,7 +225,7 @@ func getHelperConcepto(w http.ResponseWriter, r *http.Request) {
 		var arrayCondiciones []string
 
 		if p_tipoconcepto != nil {
-			condicionconcepto := "(tipoliquidacion.codigo = '" + p_tipoconcepto[0] + "')"
+			condicionconcepto := "(tipoconcepto.codigo = '" + p_tipoconcepto[0] + "')"
 			arrayCondiciones = append(arrayCondiciones, condicionconcepto)
 		}
 
@@ -243,7 +243,7 @@ func getHelperConcepto(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		sql = "SELECT * FROM CONCEPTO INNER JOIN tipoliquidacion ON concepto.tipoliquidacionid = tipoliquidacion.id" + condicion
+		sql = "SELECT * FROM CONCEPTO INNER JOIN tipoconcepto ON concepto.tipoconceptoid = tipoconcepto.id" + condicion
 
 		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptos)
 
