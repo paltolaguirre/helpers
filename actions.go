@@ -167,6 +167,8 @@ func obtenerTablaPrivada(concepto string) string {
 
 	case "liquidaciontipo":
 		return "PURAPUBLICA"
+	case "tipoliquidacion":
+		return "PURAPUBLICA"
 	default:
 		return "MIXTA"
 	}
