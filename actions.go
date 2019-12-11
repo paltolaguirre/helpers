@@ -169,6 +169,10 @@ func obtenerTablaPrivada(concepto string) string {
 		return "PURAPUBLICA"
 	case "tipoconcepto":
 		return "PURAPUBLICA"
+
+	case "tipodecalculo":
+		return "PURAPUBLICA"
+
 	default:
 		return "MIXTA"
 	}
