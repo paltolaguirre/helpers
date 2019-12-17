@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/xubiosueldos/conexionBD/Concepto/structConcepto"
 	"github.com/xubiosueldos/conexionBD/Helper/structHelper"
@@ -252,5 +253,33 @@ func getHelperConcepto(w http.ResponseWriter, r *http.Request) {
 		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptos)
 
 		framework.RespondJSON(w, http.StatusOK, conceptos)
+	}
+}
+
+func getHelperTipoimpuestoganancias(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		p_tipoconcepto := r.URL.Query()["tipoconcepto"]
+
+		var tipoimpuestoganancias []structConcepto.Tipoimpuestoganancias
+		condicion := ""
+
+		if p_tipoconcepto != nil {
+			condicion = " WHERE APLICA" + strings.ReplaceAll(p_tipoconcepto[0], "_", "") + " = true"
+
+		}
+		sql := "SELECT * FROM TIPOIMPUESTOGANANCIAS" + condicion
+
+		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&tipoimpuestoganancias)
+
+		framework.RespondJSON(w, http.StatusOK, tipoimpuestoganancias)
 	}
 }
