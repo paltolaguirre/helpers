@@ -174,6 +174,12 @@ func obtenerTablaPrivada(concepto string) string {
 	case "tipodecalculo":
 		return "PURAPUBLICA"
 
+	case "siradigtipoimpuesto":
+		return "PURAPUBLICA"
+
+	case "siradigtipooperacion":
+		return "PURAPUBLICA"
+
 	default:
 		return "MIXTA"
 	}
