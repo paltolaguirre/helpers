@@ -180,6 +180,12 @@ func obtenerTablaPrivada(concepto string) string {
 	case "siradigtipooperacion":
 		return "PURAPUBLICA"
 
+	case "function":
+		return "PURAPRIVADA"
+		
+	case "tipocalculoautomatico":
+		return "PURAPUBLICA"
+
 	default:
 		return "MIXTA"
 	}
