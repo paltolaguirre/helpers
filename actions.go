@@ -307,11 +307,20 @@ func getHelperFunction(w http.ResponseWriter, r *http.Request) {
 
 		defer conexionBD.CerrarDB(db)
 
+		p_tipo := r.URL.Query()["tipoformulas"][0]
+
+
 		var helpers []structHelper.HelperFunction
 
 		var sql string
 
-		sql = "select tabla2.name as ID, tabla2.name as nombre, tabla2.name as codigo, tabla2.description as descripcion from " + tenant + ".function as tabla2 left join " + tenant + ".param as p on p.functionname = tabla2.name  where tabla2.deleted_at is null and tabla2.result = 'number' and p.id is null and tabla2.type != 'internal'"
+		condicion := ""
+
+		if p_tipo != "sistema" {
+			condicion = "and p.id is null and tabla2.type != 'internal'"
+		}
+
+		sql = "select tabla2.name as ID, tabla2.name as nombre, tabla2.name as codigo, tabla2.description as descripcion from " + tenant + ".function as tabla2 left join " + tenant + ".param as p on p.functionname = tabla2.name  where tabla2.deleted_at is null and tabla2.result = 'number' " + condicion
 
 		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&helpers)
 
