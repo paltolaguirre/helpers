@@ -40,6 +40,12 @@ var routes = Routes{
 		getHelperConcepto,
 	},
 	Route{
+		"getHelperFunction",
+		"GET",
+		"/api/helper/helpers/function",
+		getHelperFunction,
+	},
+	Route{
 		"getHelperTipoimpuestoganancias",
 		"GET",
 		"/api/helper/helpers/tipoimpuestosganancias",
