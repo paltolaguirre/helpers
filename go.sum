@@ -137,6 +137,7 @@ github.com/xubiosueldos/autenticacion v0.0.0-20200221152037-9da5d83321a5 h1:v1qU
 github.com/xubiosueldos/autenticacion v0.0.0-20200221152037-9da5d83321a5/go.mod h1:0Iqz64+/J9+TW0YJODBodhyCUNMWPN3CNB3XqErY0hI=
 github.com/xubiosueldos/autenticacion v0.0.0-20200226131900-6322c0cae6f1 h1:7DG3tnnmUNtmY/kbsB9zCZn0YI8SKuwcftpHKAo3rao=
 github.com/xubiosueldos/autenticacion v0.0.0-20200226131900-6322c0cae6f1/go.mod h1:zHfqo+PTvj8ir4FSBzwEuNRpFbaRtsL3JrHgUklJbD8=
+github.com/xubiosueldos/autenticacion v0.0.0-20200312185424-812698f712c8/go.mod h1:eH9ihG4Xae7BonyCEV5ehNTY8Vpiunhut4Lkwzp4TAY=
 github.com/xubiosueldos/conexionBD v0.0.0-20190130160548-5347150de672 h1:bsNPQCV+KO5yDA+//+83elwVB+w0YouhPfF3Fn0Isig=
 github.com/xubiosueldos/conexionBD v0.0.0-20190130160548-5347150de672/go.mod h1:w+NLrmGfHNCU1qTKiJB519uGgyZmasmSqDoCmEoXV28=
 github.com/xubiosueldos/conexionBD v0.0.0-20190130161333-c1882e4e8a28 h1:CIFUq/TgH9Ts3eilfVf+oYm+WxvpsSdlvz+XkNUbLMs=
