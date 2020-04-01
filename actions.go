@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/xubiosueldos/conexionBD/Concepto/structConcepto"
 	"github.com/xubiosueldos/conexionBD/Helper/structHelper"
@@ -173,6 +174,18 @@ func obtenerTablaPrivada(concepto string) string {
 	case "tipodecalculo":
 		return "PURAPUBLICA"
 
+	case "siradigtipoimpuesto":
+		return "PURAPUBLICA"
+
+	case "siradigtipooperacion":
+		return "PURAPUBLICA"
+
+	case "function":
+		return "PURAPRIVADA"
+		
+	case "tipocalculoautomatico":
+		return "PURAPUBLICA"
+
 	default:
 		return "MIXTA"
 	}
@@ -252,5 +265,65 @@ func getHelperConcepto(w http.ResponseWriter, r *http.Request) {
 		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptos)
 
 		framework.RespondJSON(w, http.StatusOK, conceptos)
+	}
+}
+
+func getHelperTipoimpuestoganancias(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		p_tipoconcepto := r.URL.Query()["tipoconcepto"]
+
+		var tipoimpuestoganancias []structConcepto.Tipoimpuestoganancias
+		condicion := ""
+
+		if p_tipoconcepto != nil {
+			condicion = " WHERE APLICA" + strings.ReplaceAll(p_tipoconcepto[0], "_", "") + " = true"
+
+		}
+		sql := "SELECT * FROM TIPOIMPUESTOGANANCIAS" + condicion
+
+		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&tipoimpuestoganancias)
+
+		framework.RespondJSON(w, http.StatusOK, tipoimpuestoganancias)
+	}
+}
+
+func getHelperFunction(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		p_tipo := r.URL.Query()["tipoformulas"][0]
+
+
+		var helpers []structHelper.HelperFunction
+
+		var sql string
+
+		condicion := ""
+
+		if p_tipo != "sistema" {
+			condicion = "and p.id is null and tabla2.type != 'internal'"
+		}
+
+		sql = "select tabla2.name as ID, tabla2.name as nombre, tabla2.name as codigo, tabla2.description as descripcion from " + tenant + ".function as tabla2 left join " + tenant + ".param as p on p.functionname = tabla2.name  where tabla2.deleted_at is null and tabla2.result = 'number' " + condicion
+
+		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&helpers)
+
+		framework.RespondJSON(w, http.StatusOK, helpers)
 	}
 }
