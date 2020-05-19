@@ -182,7 +182,7 @@ func obtenerTablaPrivada(concepto string) string {
 
 	case "function":
 		return "PURAPRIVADA"
-		
+
 	case "tipocalculoautomatico":
 		return "PURAPUBLICA"
 
@@ -309,7 +309,6 @@ func getHelperFunction(w http.ResponseWriter, r *http.Request) {
 
 		p_tipo := r.URL.Query()["tipoformulas"][0]
 
-
 		var helpers []structHelper.HelperFunction
 
 		var sql string
@@ -325,5 +324,30 @@ func getHelperFunction(w http.ResponseWriter, r *http.Request) {
 		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&helpers)
 
 		framework.RespondJSON(w, http.StatusOK, helpers)
+	}
+}
+
+func getHelperConceptoafip(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		p_tipo := r.URL.Query()["tipoconcepto"]
+		var conceptofip []structConcepto.Conceptoafip
+
+		if p_tipo != nil {
+			p_tipoconcepto := p_tipo[0]
+
+			sql := "SELECT * FROM CONCEPTOAFIP CA INNER JOIN TIPOCONCEPTO TC ON TC.ID = CA.TIPOCONCEPTOID WHERE TC.CODIGO = '" + p_tipoconcepto + "'"
+			db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptofip)
+		}
+
+		framework.RespondJSON(w, http.StatusOK, conceptofip)
 	}
 }

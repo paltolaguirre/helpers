@@ -1,7 +1,10 @@
 package main
 
-import "github.com/gorilla/mux"
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
 
 type Route struct {
 	Name       string
@@ -50,6 +53,12 @@ var routes = Routes{
 		"GET",
 		"/api/helper/helpers/tipoimpuestosganancias",
 		getHelperTipoimpuestoganancias,
+	},
+	Route{
+		"getHelperConceptoafip",
+		"GET",
+		"/api/helper/helpers/conceptoafip",
+		getHelperConceptoafip,
 	},
 	Route{
 		"getHelper",
