@@ -345,6 +345,9 @@ func getHelperConceptoafip(w http.ResponseWriter, r *http.Request) {
 
 		if p_tipo != nil {
 			p_tipoconcepto := p_tipo[0]
+			if p_tipoconcepto == "DESCUENTO" {
+				p_tipoconcepto = "IMPORTE_REMUNERATIVO"
+			}
 			consulta = "INNER JOIN TIPOCONCEPTO TC ON TC.ID = CA.TIPOCONCEPTOID WHERE TC.CODIGO = '" + p_tipoconcepto + "'"
 		}
 
