@@ -339,14 +339,17 @@ func getHelperConceptoafip(w http.ResponseWriter, r *http.Request) {
 		defer conexionBD.CerrarDB(db)
 
 		p_tipo := r.URL.Query()["tipoconcepto"]
+
 		var conceptofip []structConcepto.Conceptoafip
+		var consulta string = ""
 
 		if p_tipo != nil {
 			p_tipoconcepto := p_tipo[0]
-
-			sql := "SELECT * FROM CONCEPTOAFIP CA INNER JOIN TIPOCONCEPTO TC ON TC.ID = CA.TIPOCONCEPTOID WHERE TC.CODIGO = '" + p_tipoconcepto + "'"
-			db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptofip)
+			consulta = "INNER JOIN TIPOCONCEPTO TC ON TC.ID = CA.TIPOCONCEPTOID WHERE TC.CODIGO = '" + p_tipoconcepto + "'"
 		}
+
+		sql := "SELECT * FROM CONCEPTOAFIP CA " + consulta
+		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptofip)
 
 		framework.RespondJSON(w, http.StatusOK, conceptofip)
 	}
