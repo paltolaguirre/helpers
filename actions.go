@@ -126,8 +126,7 @@ func getHelperId(w http.ResponseWriter, r *http.Request) {
 //TODO MIGRAR TODO ESTO AL ARCHIVO DE CONFIGURACION
 func obtenerTablaPrivada(concepto string) string {
 	switch os := concepto; os {
-	case "legajo":
-		return "PURAPRIVADA"
+
 	case "pais":
 		return "PURAPUBLICA"
 	case "provincia":
@@ -144,8 +143,6 @@ func obtenerTablaPrivada(concepto string) string {
 		return "PURAPRIVADA"
 	case "conyuge":
 		return "PURAPRIVADA"
-	case "obrasocial":
-		return "PURAPUBLICA"
 	case "estadocivil":
 		return "PURAPUBLICA"
 	case "condicion":
@@ -340,7 +337,7 @@ func getHelperConceptoafip(w http.ResponseWriter, r *http.Request) {
 
 		p_tipo := r.URL.Query()["tipoconcepto"]
 
-		var conceptofip []structConcepto.Conceptoafip
+		var conceptofipHelpers []structHelper.Helper
 		var consulta string = ""
 
 		if p_tipo != nil {
@@ -351,9 +348,60 @@ func getHelperConceptoafip(w http.ResponseWriter, r *http.Request) {
 			consulta = "INNER JOIN TIPOCONCEPTO TC ON TC.ID = CA.TIPOCONCEPTOID WHERE TC.CODIGO = '" + p_tipoconcepto + "'"
 		}
 
-		sql := "SELECT * FROM CONCEPTOAFIP CA " + consulta
-		db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptofip)
+		sql := "SELECT ca.id as id, codigo || ' - ' || nombre as nombre, codigo, descripcion FROM CONCEPTOAFIP CA " + consulta
+		if err := db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptofipHelpers).Error; err != nil {
+			framework.RespondError(w, http.StatusInternalServerError, err.Error())
+			return
+		} else {
+			framework.RespondJSON(w, http.StatusOK, conceptofipHelpers)
+		}
+	}
+}
 
-		framework.RespondJSON(w, http.StatusOK, conceptofip)
+func getHelperLegajo(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		var legajosHelpers []structHelper.Helper
+
+		sql := "select id, legajo || ' - ' || nombre || ', ' || apellido as nombre, codigo, descripcion from legajo where deleted_at is null and activo = 1"
+
+		if err := db.Set("gorm:auto_preload", true).Raw(sql).Scan(&legajosHelpers).Error; err != nil {
+			framework.RespondError(w, http.StatusInternalServerError, err.Error())
+			return
+		} else {
+			framework.RespondJSON(w, http.StatusOK, legajosHelpers)
+		}
+	}
+}
+
+func getHelperObrasocial(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		var obrasocialHelpers []structHelper.Helper
+
+		sql := "select id, codigo || ' - ' || nombre as nombre, codigo, descripcion from obrasocial where deleted_at is null and activo = 1"
+
+		if err := db.Set("gorm:auto_preload", true).Raw(sql).Scan(&obrasocialHelpers).Error; err != nil {
+			framework.RespondError(w, http.StatusInternalServerError, err.Error())
+			return
+		} else {
+			framework.RespondJSON(w, http.StatusOK, obrasocialHelpers)
+		}
 	}
 }

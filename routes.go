@@ -61,6 +61,18 @@ var routes = Routes{
 		getHelperConceptoafip,
 	},
 	Route{
+		"getHelperLegajo",
+		"GET",
+		"/api/helper/helpers/legajo",
+		getHelperLegajo,
+	},
+	Route{
+		"getHelperObrasocial",
+		"GET",
+		"/api/helper/helpers/obrasocial",
+		getHelperObrasocial,
+	},
+	Route{
 		"getHelper",
 		"GET",
 		"/api/helper/helpers/{codigoHelper}",
