@@ -348,7 +348,7 @@ func getHelperConceptoafip(w http.ResponseWriter, r *http.Request) {
 			consulta = "INNER JOIN TIPOCONCEPTO TC ON TC.ID = CA.TIPOCONCEPTOID WHERE TC.CODIGO = '" + p_tipoconcepto + "'"
 		}
 
-		sql := "SELECT ca.id as id, codigo || ' - ' || nombre as nombre, codigo, descripcion FROM CONCEPTOAFIP CA " + consulta
+		sql := "SELECT ca.id as id, ca.codigo || ' - ' || ca.nombre as nombre, ca.codigo as codigo, ca.descripcion as descripcion FROM CONCEPTOAFIP CA " + consulta
 		if err := db.Set("gorm:auto_preload", true).Raw(sql).Scan(&conceptofipHelpers).Error; err != nil {
 			framework.RespondError(w, http.StatusInternalServerError, err.Error())
 			return
