@@ -96,4 +96,10 @@ var routes = Routes{
 		"/api/empresa/empresas",
 		getEmpresaId,
 	},
+	Route{
+		"getImporteEnLetras",
+		"GET",
+		"/api/helper/importeenletras/{numero}",
+		getImporteEnLetras,
+	},
 }

@@ -219,6 +219,33 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func getImporteEnLetras(w http.ResponseWriter, r *http.Request) {
+
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		params := mux.Vars(r)
+
+		numero := params["numero"]
+
+		var getimporteenletras string
+
+		row := db.Raw( "select public.getImporteEnLetras(?)", numero).Row()
+
+		row.Scan(&getimporteenletras)
+
+		framework.RespondJSON(w, http.StatusOK, getimporteenletras)
+	}
+
+}
+
 func getHelperConcepto(w http.ResponseWriter, r *http.Request) {
 	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
 	if tokenValido {

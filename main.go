@@ -14,9 +14,9 @@ func main() {
 
 	router := newRouter()
 
-	server := http.ListenAndServe(":"+configuracion.Puertomicroserviciohelpers, router)
-
 	fmt.Println("Microservicio Helpers escuchando en el puerto: " + configuracion.Puertomicroserviciohelpers)
+
+	server := http.ListenAndServe(":"+configuracion.Puertomicroserviciohelpers, router)
 
 	log.Fatal(server)
 
