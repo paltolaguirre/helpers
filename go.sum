@@ -205,6 +205,7 @@ github.com/xubiosueldos/conexionBD v0.0.0-20191029182707-a4f5f7ded14d h1:IOOPU74
 github.com/xubiosueldos/conexionBD v0.0.0-20191029182707-a4f5f7ded14d/go.mod h1:jeo57E+wvI5Q21kKt/DhqL0fWzFNOuU5xlsmtO504zg=
 github.com/xubiosueldos/conexionBD v0.0.0-20191030141409-feeae8a0d4df h1:TG5Nh78CagoRxvA+YBw77aZkru/k3WNiWTQCPeOi8V4=
 github.com/xubiosueldos/conexionBD v0.0.0-20191030141409-feeae8a0d4df/go.mod h1:jeo57E+wvI5Q21kKt/DhqL0fWzFNOuU5xlsmtO504zg=
+github.com/xubiosueldos/conexionBD v0.0.0-20191101213625-139a75b436f3/go.mod h1:jeo57E+wvI5Q21kKt/DhqL0fWzFNOuU5xlsmtO504zg=
 github.com/xubiosueldos/conexionBD v0.0.0-20191105160231-3dc31c3a9ae7 h1:inbCT1DafPirprgNfTg2BEUGOs7a1C3ZPNjEsUuWuQw=
 github.com/xubiosueldos/conexionBD v0.0.0-20191105160231-3dc31c3a9ae7/go.mod h1:jeo57E+wvI5Q21kKt/DhqL0fWzFNOuU5xlsmtO504zg=
 github.com/xubiosueldos/conexionBD v0.0.0-20191114143712-4938ac25dbf2 h1:3mitz5VnmyHvkRDF6dRIIVrUeHaaUGjVwbngOaNlnxM=
@@ -240,6 +241,8 @@ github.com/xubiosueldos/conexionBD v1.1.9 h1:HaQHadFETZ7zerJ6aKA25ti05PbPmjBxA+F
 github.com/xubiosueldos/conexionBD v1.1.9/go.mod h1:CyQFrukeZ6Kn4udwJehPtc7BsG25kV4M/saT0agh4YM=
 github.com/xubiosueldos/conexionBD v1.1.15 h1:zSmU6clczBKPKVXJRMTou35X8oAP7wBSs1jOfyieVsA=
 github.com/xubiosueldos/conexionBD v1.1.15/go.mod h1:CyQFrukeZ6Kn4udwJehPtc7BsG25kV4M/saT0agh4YM=
+github.com/xubiosueldos/conexionBD v1.2.7 h1:UpjKPo7FYeXsFUogOWhp2F1Tt0ySmDC6t4dqoFBpYQg=
+github.com/xubiosueldos/conexionBD v1.2.7/go.mod h1:CyQFrukeZ6Kn4udwJehPtc7BsG25kV4M/saT0agh4YM=
 github.com/xubiosueldos/framework v0.0.0-20190502133422-d53dd93b5196 h1:SA+m66fK0NXhrVbj4pvXj/KEjbtxq+IyzdEWjsOm0Lw=
 github.com/xubiosueldos/framework v0.0.0-20190502133422-d53dd93b5196/go.mod h1:txPj3GVjVoZeJnObRIBrzNFVDT7baf2VEpK3kCkpDWg=
 github.com/xubiosueldos/framework v0.0.0-20190509132521-6f92aa67ddd1/go.mod h1:txPj3GVjVoZeJnObRIBrzNFVDT7baf2VEpK3kCkpDWg=
@@ -295,6 +298,8 @@ github.com/xubiosueldos/monoliticComunication v0.0.0-20191028102914-d680e5cb199d
 github.com/xubiosueldos/monoliticComunication v0.0.0-20191028102914-d680e5cb199d/go.mod h1:rhoyyFWO4tT6TbieNOMviu8wJH6QqH0p2hSVQWCL4/U=
 github.com/xubiosueldos/monoliticComunication v1.1.0 h1:kozEVxrNg1u53LUHEmu2wm6gY7d9drngHwAS9LhBJQM=
 github.com/xubiosueldos/monoliticComunication v1.1.0/go.mod h1:F1i3wIixgCHfqxMziWBj8r94FntBkIwwyjdTdGkJvUM=
+github.com/xubiosueldos/monoliticComunication v1.1.1 h1:Wxx49J8/l/DcHkrxwTuKPVQ+gxeCKU6yK4sCRGRvn4g=
+github.com/xubiosueldos/monoliticComunication v1.1.1/go.mod h1:nioSAmE4jkm2rIFROVFQWXb6adxF6IOq+9tFmeI8Wyc=
 go.opencensus.io v0.20.1/go.mod h1:6WKK9ahsWS3RSO+PY9ZHZUfv2irvY6gN279GOPZjmmk=
 golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
