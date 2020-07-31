@@ -157,8 +157,6 @@ func obtenerTablaPrivada(concepto string) string {
 		return "PURAPUBLICA"
 	case "situacion":
 		return "PURAPUBLICA"
-	case "zona":
-		return "PURAPUBLICA"
 
 	case "liquidacioncondicionpago":
 		return "PURAPUBLICA"
@@ -213,7 +211,7 @@ func getEmpresaId(w http.ResponseWriter, r *http.Request) {
 
 		defer conexionBD.CerrarDB(db)
 
-		dataempresa := monoliticComunication.Obtenerdatosempresa(w, r, tokenAutenticacion)
+		dataempresa := monoliticComunication.Obtenerdatosempresa(w, r, tokenAutenticacion, true)
 		framework.RespondJSON(w, http.StatusOK, dataempresa)
 	}
 
@@ -237,7 +235,7 @@ func getImporteEnLetras(w http.ResponseWriter, r *http.Request) {
 
 		var getimporteenletras string
 
-		row := db.Raw( "select public.getImporteEnLetras(?)", numero).Row()
+		row := db.Raw("select public.getImporteEnLetras(?)", numero).Row()
 
 		row.Scan(&getimporteenletras)
 
@@ -429,6 +427,30 @@ func getHelperObrasocial(w http.ResponseWriter, r *http.Request) {
 			return
 		} else {
 			framework.RespondJSON(w, http.StatusOK, obrasocialHelpers)
+		}
+	}
+}
+
+func getHelperZona(w http.ResponseWriter, r *http.Request) {
+	tokenValido, tokenAutenticacion := apiclientautenticacion.CheckTokenValido(w, r)
+	if tokenValido {
+
+		fmt.Println("La URL accedida: " + r.URL.String())
+
+		tenant := apiclientautenticacion.ObtenerTenant(tokenAutenticacion)
+		db := conexionBD.ObtenerDB(tenant)
+
+		defer conexionBD.CerrarDB(db)
+
+		var zonaHelpers []structHelper.Helper
+
+		zonaHelpers = monoliticComunication.GethelpersNombreCodigo(w, r, tokenAutenticacion, "zonaempleador", "")
+
+		if zonaHelpers != nil {
+			framework.RespondJSON(w, http.StatusOK, zonaHelpers)
+		} else {
+			framework.RespondError(w, http.StatusInternalServerError, "Hubo un error al obtener las Zonas de Trabajo")
+			return
 		}
 	}
 }
