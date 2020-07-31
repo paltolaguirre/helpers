@@ -73,6 +73,12 @@ var routes = Routes{
 		getHelperObrasocial,
 	},
 	Route{
+		"getHelperZona",
+		"GET",
+		"/api/helper/helpers/zona",
+		getHelperZona,
+	},
+	Route{
 		"getHelper",
 		"GET",
 		"/api/helper/helpers/{codigoHelper}",
