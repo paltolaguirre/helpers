@@ -444,13 +444,13 @@ func getHelperZona(w http.ResponseWriter, r *http.Request) {
 
 		var zonaHelpers []structHelper.Helper
 
-		zonaHelpers = monoliticComunication.GethelpersNombreCodigo(w, r, tokenAutenticacion, "zonaempleador", "")
+		sql := "select id, codigo || ' - ' || nombre as nombre, codigo, descripcion from zona where deleted_at is null and activo = 1"
 
-		if zonaHelpers != nil {
-			framework.RespondJSON(w, http.StatusOK, zonaHelpers)
-		} else {
-			framework.RespondError(w, http.StatusInternalServerError, "Hubo un error al obtener las Zonas de Trabajo")
+		if err := db.Set("gorm:auto_preload", true).Raw(sql).Scan(&zonaHelpers).Error; err != nil {
+			framework.RespondError(w, http.StatusInternalServerError, err.Error())
 			return
+		} else {
+			framework.RespondJSON(w, http.StatusOK, zonaHelpers)
 		}
 	}
 }
